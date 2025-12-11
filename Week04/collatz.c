@@ -9,7 +9,7 @@ while(1){
      n = n/2;
      printf("%d -> ", n);
     }
-    //Checking if the result is finnaly one to end the while loop
+    //Checking if the result is finally one to end the while loop
     if (n == 1){
         break;
     }

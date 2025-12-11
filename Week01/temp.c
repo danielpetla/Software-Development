@@ -21,7 +21,7 @@ int main() {
     }
     else if (conversion == 2) {
         double cel;
-        printf("Enter Celcius: ");
+        printf("Enter Celsius: ");
         scanf("%lf", &cel);
 
         double fa;

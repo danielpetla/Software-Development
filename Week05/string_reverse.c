@@ -7,9 +7,9 @@ void reverse_string(char str[]) {
   for (int i = 0; i < len/2; i++){ // It is len/2 because I'm not replacing a char every turn, I'm swamping them: So by the half of it everything is already in the right place
     //This line stores the character at position i temporarily, because we’re about to overwrite it.
     char bank = str [i];
-    //Replace the cahr by its opposite
+    //Replace the char by its opposite
     str [i] = str[len - 1 - i];
-    //Put the cahr that was stored and had just been replace at the position of its opposite
+    //Put the char that was stored and had just been replace at the position of its opposite
     str[len - 1 - i] = bank; 
   }
 }
@@ -26,4 +26,17 @@ int main() {
   printf("bye reversed is %s\n", bye);
   reverse_string(bye);
   printf("bye is %s\n", bye);
+
+  char how[] = "how are you ?";
+  reverse_string(how);
+  printf("how are you ? reversed is %s\n", how);
+  reverse_string(how);
+  printf("how are you ? is %s\n", how);
+
+  char good[] = "have a good day";
+  reverse_string(good);
+  printf("have a good day reversed is %s\n", good);
+  reverse_string(good);
+  printf("have a good day is %s\n", good);
+
 }
