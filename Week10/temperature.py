@@ -1,4 +1,4 @@
-val = int(input("Please enter a temperature: "))
+val = float(input("Please enter a temperature: "))
 unit = input("Please enter a temperature unit: ").upper()
 conv = input("Conversion to: ").upper()
 
