@@ -1,0 +1,4 @@
+Bolt_M10 0.01 143 15x15x30 Steel 12.3 o1874_A IN_B_254_22
+Beam_Pine 3.2 2 200x20x20 Wood 3 o3512_C IN_W_244_24
+Screw_Wood_30 0.02 20 7x7x40 Steel 8.23 oS-543 SCREW_2225x2
+
