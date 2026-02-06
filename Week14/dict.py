@@ -29,15 +29,16 @@ print("Missing words:", " ".join(missing))
 # ----------------------------------------------------------------
 
 # Part 2
-st2 = "Hello hello I say HELLO"
+st2 = "hallo hallllouh aolh xhallo"
 
 words = {}
 
 for word in st2.split():
-    key = word.lower()
+    # key = word.lower()  # for grouping normal and without vowels
+    key = frozenset(c for c in word.lower() if c not in "aeiou")  # for grouping based on consonants
 
-    for v in "aeiou":
-        key = key.replace(v, "")
+#    for v in "aeiou":  # for grouping without vowels
+#        key = key.replace(v, "")
 
     if key not in words:
         words[key] = set()  # creating a key
