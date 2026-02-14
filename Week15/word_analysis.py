@@ -26,6 +26,7 @@ for key, value in sorted(counts.items(), key=lambda item: item[1], reverse=True)
         print(f"{value}: {key}")
 
 # ---------
+
 # Finds all the characters in the book
 letters = (le.lower() for line in text for w in line.split() for le in list(w))
 
