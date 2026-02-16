@@ -50,3 +50,12 @@ for c, v in counts_l.items():
 for key, value in sorted(counts_l.items(), key=lambda item: item[1], reverse=True):
     if value >= 0.01:
         print(f"{value:.2f}%: {key}")
+
+# -------
+
+counts_w = 0
+different = set(w.lower() for line in text for w in line.split() if len(w) >= 2)
+for w in different:
+    counts_w += 1
+
+print(f"Total different words:{counts_w}")
