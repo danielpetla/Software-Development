@@ -36,6 +36,7 @@ words = {}
 for word in st2.split():
     # key = word.lower()  # for grouping normal and without vowels
     key = frozenset(c for c in word.lower() if c not in "aeiou")  # for grouping based on consonants
+    # NOTE: Frozen set is ideal, since the order of the consonants does not matter
 
 #    for v in "aeiou":  # for grouping without vowels
 #        key = key.replace(v, "")
