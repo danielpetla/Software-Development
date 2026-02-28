@@ -22,5 +22,11 @@
     "location"  : "Pacific Ocean",
     "online"    : true,
     "followers" : 654
+  },
+  "jax" : {
+    "username"  : "Jackie",
+    "location"  : "Brasil",
+    "online"    : true,
+    "followers" : 100
   }
 }
