@@ -23,3 +23,5 @@ for nest in feeding_nests:
 
 for nest in nursing_nests:
     state[nest-1] += 1  # -1 because nests are 1-indexed in input
+
+# Preciso store os novos states em uma lista, para ao final do preocesso atraves de um loop comparar cada state para ver se a repeticao foi alcada
