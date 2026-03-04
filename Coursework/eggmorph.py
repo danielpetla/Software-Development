@@ -1,41 +1,58 @@
-# first input
-numbers = list(map(int, input().split()))
-mnk = {'n': numbers[0], 'm': numbers[1], 'k': numbers[2]}
+# getting the 'bounderies' with the first statement
+n, m, k = map(int, input().split())
 
-# initial state
-state = list(map(int, input().split()))
+# second input = first state
+initial_state = tuple(map(int, input().split()))
 
-states = []   # store all states
+morphers = []
 
-# applying morph
-for r in range(mnk['k']):
+for _ in range(m):
+    data = list(map(int, input().split()))
+    fi = data[0]  # providing their numbers in the input
+    ni = data[1]  # providing their numbers in the input
+    feeding = data[2:2+fi]
+    nursing = data[2+fi:2+fi+ni]
+    morphers.append((feeding, nursing))
 
-    w_input = list(map(int, input().split()))
+# queue stores (state, depth)
+queue = [(initial_state, 0)]
+seen = {initial_state}
 
-    fi = w_input[0]
-    ni = w_input[1]
+front = 0  # pointer
 
-    feeding_nests = w_input[2:2+fi]
-    nursing_nests = w_input[2+fi:2+fi+ni]
+while front < len(queue):
+    state, depth = queue[front]
+    front += 1
 
-    # subtract 1 egg
-    for nest in feeding_nests:
-        state[nest-1] -= 1
+    if depth == k:
+        continue
 
-    # add 1 egg
-    for nest in nursing_nests:
-        state[nest-1] += 1
+    for feeding, nursing in morphers:
+        new_state = list(state)
 
-    states.append(state.copy())
+        # check if morph is possible
+        possible = True
+        for f in feeding:
+            if new_state[f-1] <= 0:
+                possible = False
+                break
 
-# check repetition
-seen = []
+        if not possible:
+            continue
 
-for st in states:
-    if st in seen:
-        print("Yes")
-        break
+        # apply morph
+        for f in feeding:
+            new_state[f-1] -= 1
+        for nst in nursing:
+            new_state[nst-1] += 1
 
-    seen.append(st)
-else:
-    print("No")
+        new_state = tuple(new_state)
+
+        if new_state in seen:
+            print("Yes")
+            exit()
+
+        seen.add(new_state)
+        queue.append((new_state, depth + 1))
+
+print("No")
