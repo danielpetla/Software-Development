@@ -26,7 +26,7 @@ while front < len(queue):
     front += 1
 
     # meas we are not allowed to apply more morphs
-    if depth == k:
+    if depth >= k:
         continue
 
     # try every morpher in the current state
