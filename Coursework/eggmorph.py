@@ -4,7 +4,7 @@ n, m, k = map(int, input().split())
 # second input = first state
 initial_state = tuple(map(int, input().split()))
 
-morphers = []
+morphers = []  # stores all the morphers
 
 for _ in range(m):
     data = list(map(int, input().split()))
@@ -14,21 +14,24 @@ for _ in range(m):
     nursing = data[2+fi:2+fi+ni]
     morphers.append((feeding, nursing))
 
-# queue stores (state, depth)
+# queue stores (state, depth) -> depth is counting the total tries
 queue = [(initial_state, 0)]
 seen = {initial_state}
 
-front = 0  # pointer
+front = 0  # index of next element to process
 
+# process every possible state
 while front < len(queue):
     state, depth = queue[front]
     front += 1
 
+    # meas we are not allowed to apply more morphs
     if depth == k:
         continue
 
+    # try every morpher in the current state
     for feeding, nursing in morphers:
-        new_state = list(state)
+        new_state = list(state)  # current state is a tuple, new state isn't
 
         # check if morph is possible
         possible = True
@@ -46,7 +49,7 @@ while front < len(queue):
         for nst in nursing:
             new_state[nst-1] += 1
 
-        new_state = tuple(new_state)
+        new_state = tuple(new_state)  # conversting back to tuple
 
         if new_state in seen:
             print("Yes")
