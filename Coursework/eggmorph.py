@@ -1,62 +1,68 @@
-import sys
-# getting the 'bounderies' with the first statement
+# Read inputs
 n, m, k = map(int, input().split())
-
-# second input = first state
 initial_state = tuple(map(int, input().split()))
 
-morphers = []  # stores all the morphers
-
+morphers = []
 for _ in range(m):
     data = list(map(int, input().split()))
-    fi = data[0]  # providing their numbers in the input
-    ni = data[1]  # providing their numbers in the input
-    feeding = data[2:2+fi]
-    nursing = data[2+fi:2+fi+ni]
+    fi = data[0]
+    ni = data[1]
+    # Subtracting 1 to make nests 0-indexed for easier list access
+    feeding = [x - 1 for x in data[2:2+fi]]
+    nursing = [x - 1 for x in data[2+fi:2+fi+ni]]
     morphers.append((feeding, nursing))
 
-# queue stores (state, depth) -> depth is counting the total tries
-queue = [(initial_state, 0)]
-seen = {initial_state}
+path = []
+visited_fails = {}
 
-front = 0  # index of next element to process
+def dfs(state, depth):
+    # CYCLE CHECK: Is the current state >= any ancestor state?
+    # If it is, the sequence  can be repeated infinitely.
+    for ancestor in path:
+        if all(s >= a for s, a in zip(state, ancestor)):
+            return True
 
-# process every possible state
-while front < len(queue):
-    state, depth = queue[front]
-    front += 1
+    # If hit the time limit k, can't search deeper.
+    if depth == k:
+        return False
 
-    # meas we are not allowed to apply more morphs
-    if depth >= k:
-        continue
+    # OPTIMIZATION: If  already failed to find a cycle from this state
+    if state in visited_fails and visited_fails[state] <= depth:
+        return False
 
-    # try every morpher in the current state
+    path.append(state)
+
     for feeding, nursing in morphers:
-        new_state = list(state)  # current state is a tuple, new state isn't
-
-        # check if morph is possible
+        # Check if morph is possible
         possible = True
         for f in feeding:
-            if new_state[f-1] <= 0:
+            if state[f] <= 0:
                 possible = False
                 break
 
         if not possible:
             continue
 
-        # apply morph
+        # Apply morph
+        new_state = list(state)
         for f in feeding:
-            new_state[f-1] -= 1
+            new_state[f] -= 1
         for nst in nursing:
-            new_state[nst-1] += 1
+            new_state[nst] += 1
 
-        new_state = tuple(new_state)  # conversting back to tuple
+        # Recursively search the next level
+        if dfs(tuple(new_state), depth + 1):
+            return True
 
-        if new_state in seen:
-            print("Yes")
-            sys.exit()
+    # Backtrack
+    path.pop()
+    visited_fails[state] = depth
+    return False
 
-        seen.add(new_state)
-        queue.append((new_state, depth + 1))
 
-print("No")
+# Start the search
+if dfs(initial_state, 0):
+    print("Yes")
+
+else:
+    print("No")
