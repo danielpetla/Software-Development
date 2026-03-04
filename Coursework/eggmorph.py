@@ -1,3 +1,4 @@
+import sys
 # getting the 'bounderies' with the first statement
 n, m, k = map(int, input().split())
 
@@ -53,7 +54,7 @@ while front < len(queue):
 
         if new_state in seen:
             print("Yes")
-            exit()
+            sys.exit()
 
         seen.add(new_state)
         queue.append((new_state, depth + 1))
