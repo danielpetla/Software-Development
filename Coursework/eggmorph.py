@@ -1,27 +1,41 @@
-# getting the number of n, n and k
-spec_input = input()
-numbers_str = spec_input.split()
-numbers = [int(num) for num in numbers_str]  # splitting the numbers of the input
+# first input
+numbers = list(map(int, input().split()))
+mnk = {'n': numbers[0], 'm': numbers[1], 'k': numbers[2]}
 
-mnk = {'n': numbers[0], 'm': numbers[1], 'k': numbers[2]}  # connecting the values to the right keys
+# initial state
+state = list(map(int, input().split()))
 
-state_input = input()
-spl_str = state_input.split()
-state = [int(s) for s in spl_str]  # splitting the numbers of the input
+states = []   # store all states
 
+# applying morph
+for r in range(mnk['k']):
 
-# getting the input os the morphs
-nest_input = input()
-unfold = nest_input.split()
-w_input = [int(m) for m in unfold]
-feeding_nests = w_input[2:2+fi]
-nursing_nests = w_input[2+fi:2+fi+ni]
+    w_input = list(map(int, input().split()))
 
-# subtract 1 egg from them
-for nest in feeding_nests:
-    state[nest-1] -= 1  # -1 because nests are 1-indexed in input
+    fi = w_input[0]
+    ni = w_input[1]
 
-for nest in nursing_nests:
-    state[nest-1] += 1  # -1 because nests are 1-indexed in input
+    feeding_nests = w_input[2:2+fi]
+    nursing_nests = w_input[2+fi:2+fi+ni]
 
-# Preciso store os novos states em uma lista, para ao final do preocesso atraves de um loop comparar cada state para ver se a repeticao foi alcada
+    # subtract 1 egg
+    for nest in feeding_nests:
+        state[nest-1] -= 1
+
+    # add 1 egg
+    for nest in nursing_nests:
+        state[nest-1] += 1
+
+    states.append(state.copy())
+
+# check repetition
+seen = []
+
+for st in states:
+    if st in seen:
+        print("Yes")
+        break
+
+    seen.append(st)
+else:
+    print("No")
