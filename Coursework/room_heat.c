@@ -80,7 +80,7 @@ int main(){
             printf("No\n");
         }
 
-        // cleanning up memory for the next search
+        // cleanning up memory
         for (int i = 0; i < m; i++) {
             free(pipes[i]);
         }
