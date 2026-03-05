@@ -86,7 +86,7 @@ int main() {
         }
 
         // Diagonal: left_bot -> right_top
-        for (int r = word_len - 1; r <= n - word_len; r++) {  // r = row
+        for (int r = word_len - 1; r < n; r++) {  // r = row
             for (int c = 0; c <= n - word_len; c++) {  // c = column
                 int mismatch = 0;
                 for (int k = 0; k < word_len; k++) {  // k will "travel" trough the words and grid
