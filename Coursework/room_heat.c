@@ -68,19 +68,19 @@ int main(){
 
     }
 
-    // if K > m -> try to use all the pipes to solve the problem
+    // if k > m -> try to use all the pipes to solve the problem
     int pipes_to_pick = (k > m) ? m : k;
 
-    int *selected_indices = malloc(k * sizeof(int)); // array to hold current guess
+    int *selected_indices = malloc(pipes_to_pick * sizeof(int)); // array to hold current guess
 
     // start search
-    if (find_solution(pipes, pipe_sizes, m, n, k, 0, 0, selected_indices)) {
+    if (find_solution(pipes, pipe_sizes, m, n, pipes_to_pick, 0, 0, selected_indices)) {
             printf("Yes\n");
         } else {
             printf("No\n");
         }
 
-        // cleanning up memory
+        // cleanning up memory for the next search
         for (int i = 0; i < m; i++) {
             free(pipes[i]);
         }
