@@ -24,6 +24,7 @@ bool check_if_covered(int **pipes, int *pipe_sizes, int n, int k, int *selected_
 }
 
 bool find_solution(int **pipes, int *pipe_sizes, int m, int n, int k, int start_idx, int current_k, int *selected) {
+
     // base case: picked exactly 'k' pipes, check
     if (current_k == k) {
         return check_if_covered(pipes, pipe_sizes, n, k, selected);
