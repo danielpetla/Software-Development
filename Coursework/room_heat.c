@@ -68,6 +68,9 @@ int main(){
 
     }
 
+    // if K > m -> try to use all the pipes to solve the problem
+    int pipes_to_pick = (k > m) ? m : k;
+
     int *selected_indices = malloc(k * sizeof(int)); // array to hold current guess
 
     // start search
