@@ -3,12 +3,14 @@ import sys
 import string
 
 def solve():
-    data = sys.stdin.read().split()
-    if not data: return
+    lines = [line for line in sys.stdin.read().splitlines() if line.strip()]
+    if not lines: return
 
-    w = int(data[0])  # rows
-    h = int(data[1])  # collumns
-    grid = data[2:2 + h]
+    first_line = lines[0].split()
+    w = int(first_line[0])  # columns
+    h = int(first_line[1])  # rows
+
+    grid = lines[1:1 + h]
 
     total_plates = {}
     wormholes = {str(i): [] for i in range(1, 10)}
@@ -55,7 +57,7 @@ def solve():
                 if (wr, wc, pressed) not in visited:
                     visited.add((wr, wc, pressed))
                     # moving
-                    q.append((wr, wc, pressed, dist))
+                    q.appendleft((wr, wc, pressed, dist))
 
         # orthogonal moviment
         for dr, dc in dirs:
