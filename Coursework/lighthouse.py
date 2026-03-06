@@ -16,19 +16,24 @@ def solve():
         k = next(tokens)
 
         # adjust 1 based coordinates into 0 based
-        start_r = next(tokens) - 1
         start_c = next(tokens) - 1
+        start_r = next(tokens) - 1
 
         # the rest of the input goes to the grid
         grid = [next(tokens) for _ in range(n * n)]
     except StopIteration:
         return
+
     # Reachability
     reachable = [False] * (n * n)  # the whole grid starts false until proven otherwise
     start_idx = start_r * n + start_c  # initial position in the grid
 
     # Chechking if initial position is valid
-    if 0 <= start_idx < (n * n) and grid[start_idx] < k:
+    if 0 <= start_r < n and 0 <= start_c < n:
+        start_idx = start_r * n + start_c
+
+   # Checking if the position is reachable
+    if 0 <= start_idx < (n * n) and grid[start_idx] <= k:
         queue = collections.deque([start_idx])  # starting point inserted in the queue
         reachable[start_idx] = True  # marking the starting point as true
 
@@ -42,68 +47,85 @@ def solve():
                 nr, nc = r + dr, c + dc
                 if 0 <= nr < n and 0 <= nc < n:
                     ni = nr * n + nc
-                    if not reachable[ni] and grid[ni] < k:
+                    if not reachable[ni] and grid[ni] <= k:
                         reachable[ni] = True
                         queue.append(ni)
 
-    # array to store cells visible at that direction
+    # array of zeros to store the vision count for each cell
     v_count = [0] * (n * n)
 
-    # Horizontal
-    for y in range(n):
+# Horizontal processing
+    for r in range(n):
+        row_start = r * n
 
-        # west to east
-        row_count = 0  # stores clear squares
-        for x in range(n):
-            idx = y * n + x
-            if grid[idx] > k:  # if the light is blocked
-                row_count = 0  # reset the counter
+        # Left (west)
+        L = [-1] * n  # stores the index of the nearest taller mountain to the left
+        stack = []
+        for c in range(n):
+            idx = row_start + c
+            val = grid[idx]
+            while stack and grid[row_start + stack[-1]] <= val:
+                stack.pop()
+            if stack:
+                L[c] = stack[-1]
+            stack.append(c)  # add the current mountain's index to the stack for future cells
 
-            else:  # if the light can pass through
-                v_count[idx] += row_count
-                row_count += 1
+        # Right (east)
+        # iterate backwards to find blockers on the right
+        R = [n] * n  # stores the index of the nearest taller mountain to the right
+        stack = []
+        for c in range(n - 1, -1, -1):
+            idx = row_start + c
+            val = grid[idx]
+            while stack and grid[row_start + stack[-1]] <= val:
+                stack.pop()
+            if stack:
+                R[c] = stack[-1]
+            stack.append(c)  # add the current mountain's index to the stack for future cells
 
-        # east to west
-        row_count = 0  # stores clear squares
-        for x in range(n - 1, -1, -1):
-            idx = y * n + x
-            if grid[idx] > k:  # if the light is blocked
-                row_count = 0  # reset the counter
-
-            else:  # if the light can pass through
-                v_count[idx] += row_count  # record number of squares
-                row_count += 1
+        # Adding horizontal visible cells
+        for c in range(n):
+            idx = row_start + c
+            v_count[idx] += (c - L[c] - 1) + (R[c] - c - 1)
 
     # Vertical
-    for x in range(n):
+    for c in range(n):
 
-        # north to south
-        col_count = 0  # stores clear squares
-        for y in range(n):
-            idx = y * n + x
-            if grid[idx] > k:  # if the light is blocked
-                col_count = 0  # reset the counter
+        # Up (north)
+        L = [-1] * n  # stores the index of the nearest taller mountain to the up
+        stack = []
+        for r in range(n):
+            idx = r * n + c
+            val = grid[idx]
+            while stack and grid[stack[-1] * n + c] <= val:
+                stack.pop()
+            if stack:
+                L[r] = stack[-1]
+            stack.append(r)  # add the current mountain's index to the stack for future cells
 
-            else:  # if the light can pass through
-                v_count[idx] += col_count
-                col_count += 1
+        # Down (south)
+        # iterate backwards to find blockers down
+        R = [n] * n  # stores the index of the nearest taller mountain to the down
+        stack = []
+        for r in range(n - 1, -1, -1):
+            idx = r * n + c
+            val = grid[idx]
+            while stack and grid[stack[-1] * n + c] <= val:
+                stack.pop()
+            if stack:
+                R[r] = stack[-1]
+            stack.append(r)  # add the current mountain's index to the stack for future cells
 
-        # south to north
-        col_count = 0  # stores clear squares
-        for y in range(n - 1, -1, -1):
-            idx = y * n + x
-            if grid[idx] > k:  # if the light is blocked
-                col_count = 0  # reset the counter
+        # Adding vertical visibel cells
+        for r in range(n):
+            idx = r * n + c
+            v_count[idx] += (r - L[r] - 1) + (R[r] - r - 1)
 
-            else:  # if the light can pass through
-                v_count[idx] += col_count
-                col_count += 1
+    # impossible case
+    max_visi = -1
 
-    # Find maximum
-    max_visi = -1  # if not reachable
     for idx in range(n * n):
         if reachable[idx]:
-            # visibility = the cell (1) + counts
             total = 1 + v_count[idx]
             if total > max_visi:
                 max_visi = total
