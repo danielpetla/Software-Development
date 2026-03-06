@@ -8,7 +8,7 @@ def solve():
         return
 
     # iterator to get the numbers one by one
-    tokens = map(int, input_data)
+    tokens = iter(map(int, input_data))
 
     try:
         # read the first line
@@ -16,35 +16,35 @@ def solve():
         k = next(tokens)
 
         # adjust 1 based coordinates into 0 based
-        start_x = next(tokens) - 1
-        start_y = next(tokens) - 1
+        start_r = next(tokens) - 1
+        start_c = next(tokens) - 1
 
         # the rest of the input goes to the grid
-        grid = list(tokens)
+        grid = [next(tokens) for _ in range(n * n)]
     except StopIteration:
         return
-
     # Reachability
     reachable = [False] * (n * n)  # the whole grid starts false until proven otherwise
-    start_idx = start_x + (start_y * n)  # initial position in the grid
+    start_idx = start_r * n + start_c  # initial position in the grid
 
-    if grid[start_idx] <= k:
+    # Chechking if initial position is valid
+    if 0 <= start_idx < (n * n) and grid[start_idx] < k:
         queue = collections.deque([start_idx])  # starting point inserted in the queue
         reachable[start_idx] = True  # marking the starting point as true
 
         # exploration loop
         while queue:
-            curr_id = queue.popleft()
-            cy, cx = divmod(curr_id, n)  # turning the index back to (x, y)
+            curr = queue.popleft()
+            r, c = divmod(curr, n)  # turning the index back to (x, y)
 
             # checking neighbor directions (up, down, left, right)
-            for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
-                nx, ny = cx + dx, cy + dy
-                if 0 <= nx < n and 0 <= ny < n:
-                    n_idx = nx + (ny * n)
-                    if not reachable[n_idx] and grid[n_idx] <= k:
-                        reachable[n_idx] = True
-                        queue.append(n_idx)
+            for dr, dc in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
+                nr, nc = r + dr, c + dc
+                if 0 <= nr < n and 0 <= nc < n:
+                    ni = nr * n + nc
+                    if not reachable[ni] and grid[ni] < k:
+                        reachable[ni] = True
+                        queue.append(ni)
 
     # array to store cells visible at that direction
     v_count = [0] * (n * n)
