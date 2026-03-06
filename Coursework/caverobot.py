@@ -1,96 +1,113 @@
-from collections import deque
 import sys
-import string
+from collections import deque
 
 def solve():
-    lines = [line for line in sys.stdin.read().splitlines() if line.strip()]
-    if not lines: return
+    # read input
+    input_data = sys.stdin.read().split()
+    if not input_data:
+        return
 
-    first_line = lines[0].split()
-    w = int(first_line[0])  # columns
-    h = int(first_line[1])  # rows
+    w = int(input_data[0])  # columns
+    h = int(input_data[1])  # rows
+    grid = input_data[2:]
 
-    grid = lines[1:1 + h]
-
-    total_plates = {}
-    wormholes = {str(i): [] for i in range(1, 10)}
     start = None
+    total_plates = {}
+    wormholes = {}
 
-    # pre-scan
+    # parse grid
     for r in range(h):
         for c in range(w):
             char = grid[r][c]
-            if 'a' <= char <= 'z':
-                total_plates[char] = total_plates.get(char, 0) + 1
-            elif '1' <= char <= '9':
-                wormholes[char].append((r, c))
-            elif char == '=':
+            if char == '=':
                 start = (r, c)
+            elif char.islower():
+                total_plates[char] = total_plates.get(char, 0) + 1
+            elif char.isdigit():
+                if char not in wormholes:
+                    wormholes[char] = []
+                wormholes[char].append((r, c))
 
-    if not start:
-        print("No")
-        return
+    # state trackers
+    visited = set()
+    pressed_plates = set()
+    pressed_counts = {}
+    opened_doors = set()
 
-    # state initialize
-    initial_pressed = frozenset()
-    visited = set([(start[0], start[1], initial_pressed)])
+    # doors encountered
+    blocked_doors = {}
+    used_wormholes = set()
 
-    # tracks: row, col, pressed plates, distance
-    q = deque([(start[0], start[1], initial_pressed, 0)])
+    q = deque()
+    q.append(start)
+    visited.add(start)
 
-    dirs = [(-1, 0), (1, 0), (0, -1), (0, 1)]
-
-    # Search
     while q:
-        r, c, pressed, dist = q.popleft()
+        r, c = q.popleft()
         char = grid[r][c]
 
-        # exit found
+        # exit reached
         if char == '!':
             print("Yes")
             return
 
+        # plates
+        if char.islower():
+            if (r, c) not in pressed_plates:
+                pressed_plates.add((r, c))
+                pressed_counts[char] = pressed_counts.get(char, 0) + 1
+
+                # checking if required plates wore pressed
+                if pressed_counts[char] == total_plates[char]:
+                    door_char = char.upper()
+                    opened_doors.add(door_char)
+
+                    # blocked doors and keep exploring
+                    if door_char in blocked_doors:
+                        for dr, dc in blocked_doors[door_char]:
+                            if (dr, dc) not in visited:
+                                visited.add((dr, dc))
+                                q.append((dr, dc))
+                        del blocked_doors[door_char]
+
         # wormhole
-        if '1' <= char <= '9':
-            for wr, wc in wormholes[char]:
-                # if wormhole not visited -> exit
-                if (wr, wc, pressed) not in visited:
-                    visited.add((wr, wc, pressed))
-                    # moving
-                    q.appendleft((wr, wc, pressed, dist))
+        if char.isdigit():
+            if char not in used_wormholes:
+                used_wormholes.add(char)
+                # adds all wormholes
+                for wr, wc in wormholes[char]:
+                    if (wr, wc) not in visited:
+                        visited.add((wr, wc))
+                        q.append((wr, wc))
 
         # orthogonal moviment
-        for dr, dc in dirs:
-            nr, nc = r + dr, c + dc
-
+        for nr, nc in [(r-1, c), (r+1, c), (r, c-1), (r, c+1)]:
             if 0 <= nr < h and 0 <= nc < w:
                 nchar = grid[nr][nc]
 
                 if nchar == '#':
                     continue
 
-                # doors
-                if 'A' <= nchar <= 'Z':
-                    req_plate = nchar.lower()
-                    if req_plate in total_plates:
-                        # count plates pressed
-                        pressed_count = sum(1 for pr, pc in pressed if grid[pr][pc] == req_plate)
-                        if pressed_count < total_plates[req_plate]:
-                            continue  # not possible
+                if nchar.isupper():
+                    if nchar in opened_doors:
+                        # open door -> walk trough
+                        if (nr, nc) not in visited:
+                            visited.add((nr, nc))
+                            q.append((nr, nc))
+                    else:
+                        # locked door -> remember location
+                        if nchar not in blocked_doors:
+                            blocked_doors[nchar] = set()
+                        blocked_doors[nchar].add((nr, nc))
+                else:
+                    # empty space, exit of wormhole
+                    if (nr, nc) not in visited:
+                        visited.add((nr, nc))
+                        q.append((nr, nc))
 
-                # plates
-                new_pressed = pressed
-                if 'a' <= nchar <= 'z' and (nr, nc) not in pressed:
-                    new_pressed = pressed | frozenset([(nr, nc)])
-
-                # check visited
-                if (nr, nc, new_pressed) not in visited:
-                    visited.add((nr, nc, new_pressed))
-                    q.append((nr, nc, new_pressed, dist + 1))
-
-    # not possible
+    # oterwise
     print("No")
 
-# Trigger function
+# Trigger the function
 if __name__ == '__main__':
     solve()
