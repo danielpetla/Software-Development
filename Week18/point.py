@@ -1,22 +1,28 @@
 class Point:
     def __init__(self, x, y, z):
         # Change this to store x y and z in self
+        self.x = x
+        self.y = y
+        self.z = z
 
     def __str__(self):
         # Change this to format the point nicely
-        return "POINT"
+        POINT = f"({self.x}, {self.y}, {self.z})"
+        return POINT
 
     def __eq__(self, o):
         if self is o:
             return True
-        if not instanceof(o, Point):
+        if not isinstance(o, Point):
             return False
         # Change this to properly compare two points
-        return True
+        if self.x == o.x and self.y == o.y and self.z == o.z:
+            return True
 
     def __hash__(self):
         # Change this to compute a proper hash. Use hash(...)
-        return 0
+        h_self = hash((self.x, self.y, self.z))
+        return h_self
 
 
 
