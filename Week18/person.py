@@ -21,6 +21,7 @@ class Person:
 
 def main():
     people_list = []
+    oldest = 2026
 
     with Path("./persons.csv").open("rt") as f:
         rows = csv.reader(f)
@@ -34,6 +35,11 @@ def main():
 
             # Date of birth
             date = row[1]
+            date_part = date.split('.')
+
+            year = int(date_part[2])
+            if year < oldest:
+                oldest = year
 
             # Country
             country = row[2]
@@ -43,6 +49,12 @@ def main():
 
     for person in people_list:
         print(person)
+
+    for person in people_list:
+        age = person.date.split('.')
+
+        if int(age[2]) == oldest:
+            print(f"Oldest person: {person.name}")
 
 if __name__ == "__main__":
     main()
