@@ -9,5 +9,22 @@ public class Calculator {
         double second = scanner.nextDouble();
 
         // TODO Compute and print the result
+
+        if (operation.equals("+")){
+            double sum = (double) first + second;
+            System.out.printf("%.2f%n", sum);
+            }
+        else if (operation.equals("-")){
+            double sub = (double) first - second;
+            System.out.printf("%.2f%n", sub);
+        }
+        else if (operation.equals("*")){
+            double mul = (double) first * second;
+            System.out.printf("%.2f%n", mul);
+        }
+        else if (operation.equals("/")){
+            double div = (double) first / second;
+            System.out.printf("%.2f%n", div);
+        }
     }
 }
